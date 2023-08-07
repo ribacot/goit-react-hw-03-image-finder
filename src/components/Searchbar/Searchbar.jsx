@@ -8,6 +8,7 @@ export default function Searchbar({ value, onSubmit, onChenge }) {
         </button>
 
         <input
+          name="searchQwery"
           className={css.searchForm_input}
           type="text"
           autoComplete="off"

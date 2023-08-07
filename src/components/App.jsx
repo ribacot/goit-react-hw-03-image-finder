@@ -1,37 +1,34 @@
 import React, { Component } from 'react';
 import ImageGallery from './ImageGallery/ImageGallery';
-// import pixabayAPI from './Sevice_Api/Pixabay_API';
 
 import Searchbar from './Searchbar/Searchbar';
 export class App extends Component {
-  // state = {
-  //   searchQwery: '',
-  // };
-  // hendlSearch = e => {
-  //   const { value } = e.target;
-  //   this.setState({ searchQwery: value });
-  //   console.log(this.state.searchQwery);
-  // };
-  // onSubmit = e => {
-  //   console.log(e);
-    // e.preventDefault();
-    // const { searchQwery } = this.state;
-    // pixabayAPI({ q: searchQwery, });
-    // console.log(searchQwery)
-    // return searchQwery
-  // };
+  state = {
+    searchQwery: '',
+    value:'',
+  };
+  hendlSearch = e => {
+    const { value } = e.target;
+    this.setState({ searchQwery: value });
+  };
+  onSubmit = async e => {
+    e.preventDefault();
+    const value = e.target.elements.searchQwery.value;
+    this.setState({
+      value,
+    searchQwery:""})
+  };
 
   render() {
     return (
       <div className="App">
         <Searchbar
-        // value={this.state.searchQwery}
-        // onSubmit={this.onSubmit}
-        // onChenge={this.hendlSearch}
+          value={this.state.searchQwery}
+          onSubmit={this.onSubmit}
+          onChenge={this.hendlSearch}
         />
-        <ImageGallery />
+        <ImageGallery searchQwery={this.state.value } />
       </div>
     );
   }
 }
-// value={this.onSubmit()}
