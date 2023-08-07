@@ -1,5 +1,5 @@
 import axios from 'axios';
-export default async function pixabayAPI({ id = null, q = null, page = 1 }) {
+export default async function pixabayAPI({ id = null, q = null, page = 1, per_page='12' }) {
   try {
     const response = await axios('https://pixabay.com/api/?', {
       params: {
@@ -9,7 +9,7 @@ export default async function pixabayAPI({ id = null, q = null, page = 1 }) {
         id,
         q,
         page,
-        per_page: '12',
+        per_page,
       },
     });
 

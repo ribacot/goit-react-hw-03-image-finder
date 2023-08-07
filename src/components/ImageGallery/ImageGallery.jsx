@@ -11,7 +11,8 @@ export default class ImageGallery extends Component {
     pictures: [],
     largeImage: null,
     modalIsOpen: false,
-    total: 0,
+    isloadMore: false,
+    per_page: 12,
     page: 1,
     visible: false,
   };
@@ -21,8 +22,9 @@ export default class ImageGallery extends Component {
     if (!this.state.pictures.length) {
       try {
         const resp = await pixabayAPI({});
+        if (resp.totalHits > 12) this.setState({ isloadMore: true });
 
-        this.setState({ pictures: resp.hits, total: resp.total });
+        this.setState({ pictures: resp.hits });
       } catch (error) {
         console.log(error);
       } finally {
@@ -32,24 +34,30 @@ export default class ImageGallery extends Component {
   }
   async componentDidUpdate(prevProps, prevState) {
     const { searchQwery } = this.props;
-    const { page } = this.state;
+    const { per_page, page } = this.state;
 
     if (page !== prevState.page || searchQwery !== prevProps.searchQwery) {
       if (searchQwery !== prevProps.searchQwery) {
-        this.setState({ pictures: [], page: 1, total: 0 });
+        this.setState({ pictures: [], page: 1 });
         try {
           const resp = await pixabayAPI({
             q: searchQwery,
             page,
           });
-
-          this.setState({ pictures: resp.hits, total: resp.total });
+          (resp.hits.length === per_page) & (resp.totalHits > per_page)
+            ? this.setState({ isloadMore: true })
+            : this.setState({ isloadMore: false });
+          this.setState({ pictures: resp.hits });
         } catch (error) {
           console.log(error);
         }
       } else {
         try {
           const resp = await pixabayAPI({ page, q: searchQwery });
+          console.log(resp.hits.length);
+          (resp.hits.length === per_page) & (resp.totalHits > per_page)
+            ? this.setState({ isloadMore: true })
+            : this.setState({ isloadMore: false });
 
           this.setState(prevState => {
             return {
@@ -66,6 +74,9 @@ export default class ImageGallery extends Component {
   }
   toggleModal = () => {
     this.setState(prevState => ({ modalIsOpen: !prevState.modalIsOpen }));
+  };
+  toggleLoadMore = () => {
+    this.setState();
   };
 
   hendleImage = async e => {
@@ -100,7 +111,7 @@ export default class ImageGallery extends Component {
             />
           ))}
         </ul>
-        {this.state.total > 12 ? <LoadMore onClick={this.loadMore} /> : null}
+        {this.state.isloadMore && <LoadMore onClick={this.loadMore} />}
         {this.state.modalIsOpen && (
           <Modal onClick={this.toggleModal}>
             <img
