@@ -75,9 +75,6 @@ export default class ImageGallery extends Component {
   toggleModal = () => {
     this.setState(prevState => ({ modalIsOpen: !prevState.modalIsOpen }));
   };
-  toggleLoadMore = () => {
-    this.setState();
-  };
 
   hendleImage = async e => {
     const { id } = e.target;
