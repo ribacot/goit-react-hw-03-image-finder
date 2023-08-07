@@ -63,6 +63,7 @@ export default class ImageGallery extends Component {
         const resp = await pixabayAPI({ page, q: searchQwery });
         if (searchQwery !== prevProps.searchQwery) {
           this.setState({ pictures: resp.hits});
+          return;
         }
 
         this.setState({
