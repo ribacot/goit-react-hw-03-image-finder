@@ -29,47 +29,44 @@ export default class ImageGallery extends Component {
     const { searchQwery } = this.props;
     const { page } = this.state;
 
-    // if (page !== prevState.page) {
-    //   if (searchQwery !== prevProps.searchQwery) {
-    //     this.setState({ page: 1 });
-    //   }
-    //   try {
-    //     const resp = await pixabayAPI({ page, q: searchQwery });
-    //     this.setState({
-    //       pictures: [...prevState.pictures, ...resp.hits],
-    //     });
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
-
     if (searchQwery !== prevProps.searchQwery) {
+      this.setState({ page: 1 ,pictures:[]});
       try {
         const resp = await pixabayAPI({
           q: searchQwery,
-          page: 1,
+          page,
         });
 
-        this.setState({ pictures: resp.hits, page: 1 });
+        this.setState({ pictures: resp.hits });
       } catch (error) {
         console.log(error);
       }
     }
-    if (page !== prevState.page) {
-      // if (searchQwery !== prevProps.searchQwery) {
-      //   this.setState({ page: 1 });
-      // }
-      try {
-        const resp = await pixabayAPI({ page, q: searchQwery });
-        if (searchQwery !== prevProps.searchQwery) {
-          this.setState({ pictures: resp.hits});
-        }
 
-        this.setState({
-          pictures: [...prevState.pictures, ...resp.hits],
-        });
-      } catch (error) {
-        console.log(error);
+    if (page !== prevState.page) {
+      if (searchQwery !== prevProps.searchQwery) {
+        this.setState({pictures:[], page: 1 });
+        try {
+          const resp = await pixabayAPI({
+            q: searchQwery,
+            page,
+          });
+
+          this.setState({ pictures: resp.hits });
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        try {
+          const resp = await pixabayAPI({ page, q: searchQwery });
+
+          this.setState(prevState => {
+            return { pictures: [...prevState.pictures, ...resp.hits] };
+          });
+          console.log(resp);
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   }
