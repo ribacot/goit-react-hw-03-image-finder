@@ -1,7 +1,5 @@
-import css from './ImageGalleryItem.module.css'
+import css from './ImageGalleryItem.module.css';
 export default function ImageGalleryItem({ webformatURL, onClick, id }) {
-  
-
   return (
     <li className={css.ImageGalleryItem}>
       <img

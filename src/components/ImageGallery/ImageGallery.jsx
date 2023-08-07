@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import pixabayAPI from 'components/Sevice_Api/Pixabay_API';
-
+import { Circles } from 'react-loader-spinner';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
-import LoadMore from 'LoadMore/LoadMore';
+import LoadMore from 'components/LoadMore/LoadMore';
 import Modal from 'components/Modal/Modal';
 import css from './ImageGallery.module.css';
 
@@ -11,17 +11,22 @@ export default class ImageGallery extends Component {
     pictures: [],
     largeImage: null,
     modalIsOpen: false,
+    total: 0,
     page: 1,
+    visible: false,
   };
 
   async componentDidMount() {
+    this.setState({ visible: true });
     if (!this.state.pictures.length) {
       try {
         const resp = await pixabayAPI({});
 
-        this.setState({ pictures: resp.hits });
+        this.setState({ pictures: resp.hits, total: resp.total });
       } catch (error) {
         console.log(error);
+      } finally {
+        this.setState({ visible: false });
       }
     }
   }
@@ -29,16 +34,16 @@ export default class ImageGallery extends Component {
     const { searchQwery } = this.props;
     const { page } = this.state;
 
-    if (page !== prevState.page||searchQwery !== prevProps.searchQwery) {
+    if (page !== prevState.page || searchQwery !== prevProps.searchQwery) {
       if (searchQwery !== prevProps.searchQwery) {
-        this.setState({pictures:[], page: 1 });
+        this.setState({ pictures: [], page: 1, total: 0 });
         try {
           const resp = await pixabayAPI({
             q: searchQwery,
             page,
           });
 
-          this.setState({ pictures: resp.hits });
+          this.setState({ pictures: resp.hits, total: resp.total });
         } catch (error) {
           console.log(error);
         }
@@ -47,7 +52,10 @@ export default class ImageGallery extends Component {
           const resp = await pixabayAPI({ page, q: searchQwery });
 
           this.setState(prevState => {
-            return { pictures: [...prevState.pictures, ...resp.hits] };
+            return {
+              pictures: [...prevState.pictures, ...resp.hits],
+              total: resp.total,
+            };
           });
           console.log(resp);
         } catch (error) {
@@ -56,6 +64,9 @@ export default class ImageGallery extends Component {
       }
     }
   }
+  toggleModal = () => {
+    this.setState(prevState => ({ modalIsOpen: !prevState.modalIsOpen }));
+  };
 
   hendleImage = async e => {
     const { id } = e.target;
@@ -78,6 +89,7 @@ export default class ImageGallery extends Component {
   render() {
     return (
       <>
+        <Circles visible={this.state.visible} />
         <ul className={css.ImageGallery}>
           {this.state.pictures.map(({ id, webformatURL }) => (
             <ImageGalleryItem
@@ -88,12 +100,16 @@ export default class ImageGallery extends Component {
             />
           ))}
         </ul>
-        {this.state.pictures.length ? (
-          <LoadMore onClick={this.loadMore} />
-        ) : (
-          <p>no pictures</p>
+        {this.state.total > 12 ? <LoadMore onClick={this.loadMore} /> : null}
+        {this.state.modalIsOpen && (
+          <Modal onClick={this.toggleModal}>
+            <img
+              src={this.state.largeImage}
+              alt=""
+              onClick={this.toggleModal}
+            />
+          </Modal>
         )}
-        {this.state.modalIsOpen && <Modal largeImage={this.state.largeImage} />}
       </>
     );
   }
