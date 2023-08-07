@@ -66,14 +66,13 @@ textarea {
   padding-bottom: 24px;
 }
 
- */
 
 
 
 
-/*
-* Стили компонента Buton (Load more)
-*/
+
+/* Стили компонента Buton (Load more) */
+
 .Button {
   padding: 8px 16px;
   border-radius: 2px;

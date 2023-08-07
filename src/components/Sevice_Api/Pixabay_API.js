@@ -2,7 +2,7 @@ import axios from 'axios';
 export default async function pixabayAPI({id=null,q=null}) {
   try {
     const response = await axios(
-      'https://pixabay.com/api/',
+      'https://pixabay.com/api/?',
       {
         params: {
           key: '37410571-78e708f3fcce6ce73b7e36a87',
