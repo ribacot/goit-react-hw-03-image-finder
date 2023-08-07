@@ -44,17 +44,13 @@ export default class ImageGallery extends Component {
     }
 
     if (page !== prevState.page) {
-      if (searchQwery !== prevProps.searchQwery) {
-        this.setState({pictures:[], page: 1 });
-        try {
-          const resp = await pixabayAPI({
-            q: searchQwery,
-            page,
-          });
-
-          this.setState({ pictures: resp.hits });
-        } catch (error) {
-          console.log(error);
+      // if (searchQwery !== prevProps.searchQwery) {
+      //   this.setState({ page: 1 });
+      // }
+      try {
+        const resp = await pixabayAPI({ page, q: searchQwery });
+        if (searchQwery !== prevProps.searchQwery) {
+          this.setState({ pictures: resp.hits});
         }
       } else {
         try {
